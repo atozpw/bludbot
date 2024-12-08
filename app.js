@@ -83,13 +83,16 @@ const getCustomer = async (id) => {
 
 const getBills = async (id) => {
     const db = await connection();
-    const [rows] = await db.query("SELECT rek_thn, rek_bln, rek_stankini - rek_stanlalu AS rek_pakai, rek_uangair, rek_adm + rek_meter AS rek_beban, getDenda(rek_total, rek_bln, rek_thn, rek_gol) AS rek_denda, getDenda(rek_total, rek_bln, rek_thn, rek_gol) + rek_total AS rek_total FROM tm_rekening WHERE rek_sts = 1 AND rek_byr_sts = 0 AND pel_no = ?", [id]);
+    const [rows] = await db.query("SELECT `rek_thn`, `rek_bln`, `rek_stankini` - `rek_stanlalu` AS `rek_pakai`, `rek_uangair`, `rek_adm` + `rek_meter` AS `rek_beban`, `getDenda`(`rek_total`, `rek_bln`, `rek_thn`, `rek_gol`) AS `rek_denda`, `getDenda`(`rek_total`, `rek_bln`, `rek_thn`, `rek_gol`) + `rek_total` AS `rek_total` FROM `tm_rekening` WHERE `rek_sts` = 1 AND `rek_byr_sts` = 0 AND `pel_no` = ?", [id]);
     await db.end();
     return rows || false;
 };
 
 const getHistories = async (id) => {
-
+    const db = await connection();
+    const [rows] = await db.query("SELECT `a`.`rek_thn`, `a`.`rek_bln`, `a`.`rek_stankini` - `a`.`rek_stanlalu` AS `rek_pakai`, `b`.`byr_total`, `c`.`kar_nama`, DATE_FORMAT(`b`.`byr_tgl`, '%e') AS `byr_tgl`, DATE_FORMAT(`b`.`byr_tgl`, '%c') AS `byr_bln`, DATE_FORMAT(`b`.`byr_tgl`, '%Y') AS `byr_thn` FROM `tm_rekening` `a` JOIN `tm_pembayaran` `b` ON `b`.`rek_nomor` = `a`.`rek_nomor` AND `b`.`byr_sts` > 0 JOIN `tm_karyawan` `c` ON `c`.`kar_id` = `b`.`kar_id` WHERE `a`.`rek_sts` = 1 AND `a`.`pel_no` = ? ORDER BY `a`.`rek_nomor` DESC LIMIT 5", [id]);
+    await db.end();
+    return rows || false;
 };
 
 const getInformation = async () => {
@@ -152,7 +155,7 @@ const greetingMessage = async () => {
 
 const askSubjectMessage = async () => {
     let message = ``;
-    message += `Test`;
+    message += `Berapa nomor pelanggan Anda?`;
     return message;
 }
 
@@ -171,16 +174,34 @@ const customerMessage = async (customer) => {
 }
 
 const billsMessage = async (bills) => {
-    let message = "";
-
-
+    let message = ``;
+    let billTotal = 0;
+    for (let bill of bills) {
+        message += `Periode ${monthFormatter(bill.rek_bln)} ${bill.rek_thn}\n`;
+        message += `Pemakaian Air : ${bill.rek_pakai} m3\n`;
+        message += `Uang Air : ${rupiahFormatter(bill.rek_uangair)}\n`;
+        message += `Beban Tetap : ${rupiahFormatter(bill.rek_beban)}\n`;
+        message += `Denda : ${rupiahFormatter(bill.rek_denda)}\n`;
+        message += `Total : ${rupiahFormatter(bill.rek_total)}\n`;
+        message += `\n`;
+        billTotal += bill.rek_total;
+    }
+    message += `Total Tagihan : ${rupiahFormatter(billTotal)}`;
     return message;
 }
 
 const historiesMessage = async (histories) => {
-    let message = "";
-
-
+    let message = ``;
+    let i = 0;
+    for (let history of histories) {
+        if (i > 0) message += `\n\n`;
+        message += `Periode ${monthFormatter(history.rek_bln)} ${history.rek_thn}\n`;
+        message += `Tanggal Bayar : ${history.byr_tgl} ${monthFormatter(history.byr_bln)} ${history.byr_thn}\n`;
+        message += `Loket : ${history.kar_nama}\n`;
+        message += `Pemakaian Air : ${history.rek_pakai} m3\n`;
+        message += `Total : ${rupiahFormatter(history.byr_total)}`;
+        i++;
+    }
     return message;
 }
 
@@ -239,33 +260,29 @@ client.on("message", async (message) => {
     else if (session && message.body == "1") {
         const chat = await message.getChat();
         chat.sendStateTyping();
-        const customer = await getCustomer("100001");
+        const customer = await getCustomer("100006");
         const reply = await customerMessage(customer);
         await sleep(5000);
         chat.clearState();
         client.sendMessage(message.from, reply);
     }
     else if (session && message.body == "2") {
-        // INFORMASI TAGIHAN
-        // ---------------------------------
-        // Periode XXX
-        // Pemakaian Air : XX m3
-        // Uang Air : Rp XXX
-        // Beban Tetap : Rp XXX
-        // Denda : Rp XXX
-        // Total : Rp XXX
-        //
-        // Total Tagihan : Rp XXX
+        const chat = await message.getChat();
+        chat.sendStateTyping();
+        const bills = await getBills("100006");
+        const reply = await billsMessage(bills);
+        await sleep(5000);
+        chat.clearState();
+        client.sendMessage(message.from, reply);
     }
     else if (session && message.body == "3") {
-        // RIWAYAT PEMBAYARAN
-        // ---------------------------------
-        // Periode XXX
-        // Tanggal Bayar : XXXX-XX-XX
-        // Loket : XXX
-        // Total : Rp XXX
-        //
-        // 5 bulan terakhir
+        const chat = await message.getChat();
+        chat.sendStateTyping();
+        const histories = await getHistories("100006");
+        const reply = await historiesMessage(histories);
+        await sleep(5000);
+        chat.clearState();
+        client.sendMessage(message.from, reply);
     }
     else if (session && message.body == "4") {
         // BAYAR TAGIHAN

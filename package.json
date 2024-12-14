@@ -2,6 +2,7 @@
   "name": "bludbot",
   "version": "1.0.0",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "node app.js"
   },
@@ -10,6 +11,7 @@
   "license": "ISC",
   "description": "WhatsApp Bot BLUD Air Minum Kota Cimahi",
   "dependencies": {
+    "dateformat": "^5.0.3",
     "dotenv": "^16.4.7",
     "mysql2": "^3.11.5",
     "qrcode-terminal": "^0.12.0",

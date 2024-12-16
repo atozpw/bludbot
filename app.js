@@ -126,11 +126,11 @@ const getHistories = async (id) => {
   return rows || false;
 };
 
-const getInformation = async () => {};
+const getInformation = async () => { };
 
-const storeComplaint = async () => {};
+const storeComplaint = async () => { };
 
-const getComplaint = async (id) => {};
+const getComplaint = async (id) => { };
 
 // --------------------------------------------------------
 // End Database Service
@@ -259,12 +259,8 @@ const historiesMessage = async (customerNo, histories) => {
   message += `Berikut adalah riwayat pembayaran 5 bulan terakhir Anda dengan Nomor Pelanggan ${customerNo}.\n\n`;
   for (let history of histories) {
     if (i > 0) message += `\n\n`;
-    message += `Periode ${monthFormatter(history.rek_bln)} ${
-      history.rek_thn
-    }\n`;
-    message += `Tanggal Bayar : ${history.byr_tgl} ${monthFormatter(
-      history.byr_bln
-    )} ${history.byr_thn}\n`;
+    message += `Periode ${monthFormatter(history.rek_bln)} ${history.rek_thn}\n`;
+    message += `Tanggal Bayar : ${history.byr_tgl} ${monthFormatter(history.byr_bln)} ${history.byr_thn}\n`;
     message += `Loket : ${history.kar_nama}\n`;
     message += `Pemakaian Air : ${history.rek_pakai} m3\n`;
     message += `Total : ${rupiahFormatter(history.byr_total)}`;
@@ -328,9 +324,10 @@ const keywordNotFoundMessage = async () => {
   message += `2. Informasi Tagihan\n`;
   message += `3. Riwayat Pembayaran\n`;
   message += `4. Pembayaran Tagihan\n`;
-  message += `5. Pengaduan Pelanggan\n`;
-  message += `6. Status Pengaduan\n`;
-  message += `7. Informasi Gangguan`;
+  message += `5. Pemasangan Baru\n`;
+  message += `6. Pengaduan Pelanggan\n`;
+  message += `7. Status Pengaduan\n`;
+  message += `8. Informasi Gangguan`;
   return message;
 };
 

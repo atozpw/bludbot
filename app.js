@@ -52,76 +52,61 @@ const connection = async () => {
 
 const startSession = async (from) => {
   const db = await connection();
-  const query =
-    "INSERT INTO `wa_sessions` (`from`, `expired_at`) VALUES (?, UNIX_TIMESTAMP() + 900)";
+  const query = "INSERT INTO `wa_sessions` (`from`, `expired_at`) VALUES (?, UNIX_TIMESTAMP() + 900)";
   await db.execute(query, [from]);
   await db.end();
 };
 
 const updateContext = async (from, context) => {
   const db = await connection();
-  await db.execute(
-    "UPDATE `wa_sessions` SET `context` = ?, `expired_at` = UNIX_TIMESTAMP() + 900 WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()",
-    [context, from]
-  );
+  const query = "UPDATE `wa_sessions` SET `context` = ?, `expired_at` = UNIX_TIMESTAMP() + 900 WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()";
+  await db.execute(query, [context, from]);
   await db.end();
 };
 
 const updateSubject = async (from, subject) => {
   const db = await connection();
-  await db.execute(
-    "UPDATE `wa_sessions` SET `subject` = ?, `expired_at` = UNIX_TIMESTAMP() + 900 WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()",
-    [subject, from]
-  );
+  const query = "UPDATE `wa_sessions` SET `subject` = ?, `expired_at` = UNIX_TIMESTAMP() + 900 WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()";
+  await db.execute(query, [subject, from]);
   await db.end();
 };
 
 const getSession = async (from) => {
   const db = await connection();
-  const [rows] = await db.query(
-    "SELECT `id`, `context`, `subject` FROM `wa_sessions` WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP() ORDER BY `expired_at` DESC LIMIT 1",
-    [from]
-  );
+  const query = "SELECT `id`, `context`, `subject` FROM `wa_sessions` WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP() ORDER BY `expired_at` DESC LIMIT 1";
+  const [rows] = await db.query(query, [from]);
   await db.end();
   return rows[0] || false;
 };
 
 const getCustomer = async (id) => {
   const db = await connection();
-  const [rows] = await db.query(
-    "SELECT `a`.`pel_no`, `a`.`pel_nama`, `a`.`pel_alamat`, `e`.`kel_ket`, `f`.`kec_ket`, `a`.`dkd_kd`, `c`.`gol_ket`, `d`.`um_ukuran`, `b`.`kps_ket` FROM `tm_pelanggan` `a` JOIN `tr_kondisi_ps` `b` ON `b`.`kps_kode` = `a`.`kps_kode` JOIN `tr_gol` `c` ON `c`.`gol_kode` = `a`.`gol_kode` JOIN `tr_ukuranmeter` `d` ON `d`.`um_kode` = `a`.`um_kode` JOIN `tr_kelurahan` `e` ON `e`.`kel_kode` = `a`.`kel_kode` JOIN `tr_kecamatan` `f` ON `f`.`kec_kode` = `e`.`kec_kode` WHERE `a`.`pel_no` = ?",
-    [id]
-  );
+  const query = "SELECT `a`.`pel_no`, `a`.`pel_nama`, `a`.`pel_alamat`, `e`.`kel_ket`, `f`.`kec_ket`, `a`.`dkd_kd`, `c`.`gol_ket`, `d`.`um_ukuran`, `b`.`kps_ket` FROM `tm_pelanggan` `a` JOIN `tr_kondisi_ps` `b` ON `b`.`kps_kode` = `a`.`kps_kode` JOIN `tr_gol` `c` ON `c`.`gol_kode` = `a`.`gol_kode` JOIN `tr_ukuranmeter` `d` ON `d`.`um_kode` = `a`.`um_kode` JOIN `tr_kelurahan` `e` ON `e`.`kel_kode` = `a`.`kel_kode` JOIN `tr_kecamatan` `f` ON `f`.`kec_kode` = `e`.`kec_kode` WHERE `a`.`pel_no` = ?";
+  const [rows] = await db.query(query, [id]);
   await db.end();
   return rows[0] || false;
 };
 
 const checkCustomer = async (id) => {
   const db = await connection();
-  const [rows] = await db.query(
-    "SELECT `pel_no` FROM `tm_pelanggan` WHERE `pel_no` = ?",
-    [id]
-  );
+  const query = "SELECT `pel_no` FROM `tm_pelanggan` WHERE `pel_no` = ?";
+  const [rows] = await db.query(query, [id]);
   await db.end();
   return rows[0] || false;
 };
 
 const getBills = async (id) => {
   const db = await connection();
-  const [rows] = await db.query(
-    "SELECT `rek_thn`, `rek_bln`, `rek_stankini` - `rek_stanlalu` AS `rek_pakai`, `rek_uangair`, `rek_adm` + `rek_meter` AS `rek_beban`, `getDenda`(`rek_total`, `rek_bln`, `rek_thn`, `rek_gol`) AS `rek_denda`, `getDenda`(`rek_total`, `rek_bln`, `rek_thn`, `rek_gol`) + `rek_total` AS `rek_total` FROM `tm_rekening` WHERE `rek_sts` = 1 AND `rek_byr_sts` = 0 AND `pel_no` = ?",
-    [id]
-  );
+  const query = "SELECT `rek_thn`, `rek_bln`, `rek_stankini` - `rek_stanlalu` AS `rek_pakai`, `rek_uangair`, `rek_adm` + `rek_meter` AS `rek_beban`, `getDenda`(`rek_total`, `rek_bln`, `rek_thn`, `rek_gol`) AS `rek_denda`, `getDenda`(`rek_total`, `rek_bln`, `rek_thn`, `rek_gol`) + `rek_total` AS `rek_total` FROM `tm_rekening` WHERE `rek_sts` = 1 AND `rek_byr_sts` = 0 AND `pel_no` = ?";
+  const [rows] = await db.query(query, [id]);
   await db.end();
   return rows || false;
 };
 
 const getHistories = async (id) => {
   const db = await connection();
-  const [rows] = await db.query(
-    "SELECT `a`.`rek_thn`, `a`.`rek_bln`, `a`.`rek_stankini` - `a`.`rek_stanlalu` AS `rek_pakai`, `b`.`byr_total`, `c`.`kar_nama`, DATE_FORMAT(`b`.`byr_tgl`, '%e') AS `byr_tgl`, DATE_FORMAT(`b`.`byr_tgl`, '%c') AS `byr_bln`, DATE_FORMAT(`b`.`byr_tgl`, '%Y') AS `byr_thn` FROM `tm_rekening` `a` JOIN `tm_pembayaran` `b` ON `b`.`rek_nomor` = `a`.`rek_nomor` AND `b`.`byr_sts` > 0 JOIN `tm_karyawan` `c` ON `c`.`kar_id` = `b`.`kar_id` WHERE `a`.`rek_sts` = 1 AND `a`.`pel_no` = ? ORDER BY `a`.`rek_nomor` DESC LIMIT 5",
-    [id]
-  );
+  const query = "SELECT `a`.`rek_thn`, `a`.`rek_bln`, `a`.`rek_stankini` - `a`.`rek_stanlalu` AS `rek_pakai`, `b`.`byr_total`, `c`.`kar_nama`, DATE_FORMAT(`b`.`byr_tgl`, '%e') AS `byr_tgl`, DATE_FORMAT(`b`.`byr_tgl`, '%c') AS `byr_bln`, DATE_FORMAT(`b`.`byr_tgl`, '%Y') AS `byr_thn` FROM `tm_rekening` `a` JOIN `tm_pembayaran` `b` ON `b`.`rek_nomor` = `a`.`rek_nomor` AND `b`.`byr_sts` > 0 JOIN `tm_karyawan` `c` ON `c`.`kar_id` = `b`.`kar_id` WHERE `a`.`rek_sts` = 1 AND `a`.`pel_no` = ? ORDER BY `a`.`rek_nomor` DESC LIMIT 5";
+  const [rows] = await db.query(query, [id]);
   await db.end();
   return rows || false;
 };
@@ -217,6 +202,21 @@ const askSubjectMessage = async () => {
   return message;
 };
 
+const askContextMessage = async () => {
+  let message = ``;
+  message += `Untuk melakukan pengecekan dengan nomor pelanggan yang berbeda, Anda bisa langsung mengetikan nomor pelanggan lagi.\n\n`;
+  message += `Atau bisa mengetikan angka dari pilihan di bawah untuk mendapatkan informasi lainnya.\n`;
+  message += `1. Informasi Pelanggan\n`;
+  message += `2. Informasi Tagihan\n`;
+  message += `3. Riwayat Pembayaran\n`;
+  message += `4. Pembayaran Tagihan\n`;
+  message += `5. Pemasangan Baru\n`;
+  message += `6. Pengaduan Pelanggan\n`;
+  message += `7. Status Pengaduan\n`;
+  message += `8. Informasi Gangguan`;
+  return message;
+};
+
 const customerMessage = async (customer) => {
   let message = ``;
   message += `Berikut adalah informasi dari Pelanggan dengan Nomor ${customer.pel_no}.\n\n`;
@@ -295,7 +295,7 @@ const complaintStatusMessage = async () => {
 
 const informationMessage = async () => {
   let message = ``;
-  message += `Mohon maaf, saat ini informasi belum tersedia.`;
+  message += `Mohon maaf, saat ini informasi tentang gangguan pengaliran belum tersedia.`;
   return message;
 };
 
@@ -319,7 +319,7 @@ const historyNotFoundMessage = async (customerNo) => {
 
 const keywordNotFoundMessage = async () => {
   let message = ``;
-  message += `Mohon maaf, keyword yang Anda masukan tidak ada. Anda bisa memilih keyword yang ada di bawah ini dengan mengetikan angka.\n`;
+  message += `Mohon maaf, keyword yang Anda masukan tidak ada. Anda bisa memilih keyword yang ada di bawah dengan mengetikan angka.\n`;
   message += `1. Informasi Pelanggan\n`;
   message += `2. Informasi Tagihan\n`;
   message += `3. Riwayat Pembayaran\n`;
@@ -391,7 +391,12 @@ client.on("message", async (message) => {
       const reply = await customerMessage(customer);
       await sleep(5000);
       chat.clearState();
-      client.sendMessage(message.from, reply);
+      await client.sendMessage(message.from, reply);
+      chat.sendStateTyping();
+      await sleep(3000);
+      const info = await askContextMessage();
+      chat.clearState();
+      client.sendMessage(message.from, info);
     } else {
       const reply = await askSubjectMessage();
       await sleep(2000);
@@ -404,10 +409,27 @@ client.on("message", async (message) => {
     chat.sendStateTyping();
     if (session["subject"]) {
       const bills = await getBills(session["subject"]);
-      const reply = await billsMessage(session["subject"], bills);
-      await sleep(5000);
-      chat.clearState();
-      client.sendMessage(message.from, reply);
+      if (bills.length > 0) {
+        const reply = await billsMessage(session["subject"], bills);
+        await sleep(5000);
+        chat.clearState();
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
+      } else {
+        const reply = await billNotFoundMessage(message.body);
+        await sleep(3000);
+        chat.clearState();
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
+      }
     } else {
       const reply = await askSubjectMessage();
       await sleep(2000);
@@ -420,10 +442,27 @@ client.on("message", async (message) => {
     chat.sendStateTyping();
     if (session["subject"]) {
       const histories = await getHistories(session["subject"]);
-      const reply = await historiesMessage(session["subject"], histories);
-      await sleep(5000);
-      chat.clearState();
-      client.sendMessage(message.from, reply);
+      if (histories.length > 0) {
+        const reply = await historiesMessage(session["subject"], histories);
+        await sleep(5000);
+        chat.clearState();
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
+      } else {
+        const reply = await historyNotFoundMessage(message.body);
+        await sleep(3000);
+        chat.clearState();
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
+      }
     } else {
       const reply = await askSubjectMessage();
       await sleep(2000);
@@ -480,7 +519,12 @@ client.on("message", async (message) => {
       const reply = await customerMessage(customer);
       await sleep(5000);
       chat.clearState();
-      client.sendMessage(message.from, reply);
+      await client.sendMessage(message.from, reply);
+      chat.sendStateTyping();
+      await sleep(5000);
+      const info = await askContextMessage();
+      chat.clearState();
+      client.sendMessage(message.from, info);
     } else {
       const reply = await customerNotFoundMessage(message.body);
       await sleep(3000);
@@ -494,16 +538,26 @@ client.on("message", async (message) => {
     if (check) {
       await updateSubject(message.from, message.body);
       const bills = await getBills(message.body);
-      if (bills) {
+      if (bills.length > 0) {
         const reply = await billsMessage(message.body, bills);
         await sleep(5000);
         chat.clearState();
-        client.sendMessage(message.from, reply);
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
       } else {
         const reply = await billNotFoundMessage(message.body);
         await sleep(3000);
         chat.clearState();
-        client.sendMessage(message.from, reply);
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
       }
     } else {
       const reply = await customerNotFoundMessage(message.body);
@@ -518,16 +572,26 @@ client.on("message", async (message) => {
     if (check) {
       await updateSubject(message.from, message.body);
       const histories = await getHistories(message.body);
-      if (histories) {
+      if (histories.length > 0) {
         const reply = await historiesMessage(message.body, histories);
         await sleep(5000);
         chat.clearState();
-        client.sendMessage(message.from, reply);
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
       } else {
         const reply = await historyNotFoundMessage(message.body);
         await sleep(3000);
         chat.clearState();
-        client.sendMessage(message.from, reply);
+        await client.sendMessage(message.from, reply);
+        chat.sendStateTyping();
+        await sleep(3000);
+        const info = await askContextMessage();
+        chat.clearState();
+        client.sendMessage(message.from, info);
       }
     } else {
       const reply = await customerNotFoundMessage(message.body);

@@ -14,6 +14,7 @@ const { Client, LocalAuth, Location } = WhatsAppWebJS;
 const APP_NAME = process.env.APP_NAME;
 const CLIENT_ID = process.env.CLIENT_ID;
 const SESSION_TIME = process.env.SESSION_TIME;
+const CALL_REJECT = process.env.CALL_REJECT === "true";
 
 const client = new Client({
   authStrategy: new LocalAuth({
@@ -35,9 +36,8 @@ const client = new Client({
 
 const officeLocation = new Location(-6.8693818, 107.5541125, {
   name: 'BLUD Air Minum Kota Cimahi',
-  address: '4HJ3+7X7, Citeureup, Kec. Cimahi Utara, Kota Cimahi, Jawa Barat 40512',
-  url: 'https://google.com'
-})
+  address: '4HJ3+7X7, Citeureup, Kec. Cimahi Utara, Kota Cimahi, Jawa Barat 40512'
+});
 
 // --------------------------------------------------------
 // End Initialize
@@ -343,6 +343,12 @@ const keywordNotFoundMessage = async () => {
   return message;
 };
 
+const callRejectMessage = async () => {
+  let message = ``;
+  message += `Mohon maaf, Saya tidak bisa menjawab panggilan.`;
+  return message;
+};
+
 // --------------------------------------------------------
 // End Message Template
 // --------------------------------------------------------
@@ -397,7 +403,14 @@ client.on("qr", (qr) => {
 
 client.on("message", async (message) => {
   const session = await getSession(message.from);
-  if (!session) {
+  if (CALL_REJECT && message.type == "call_log") {
+    const chat = await message.getChat();
+    chat.sendStateTyping();
+    const reply = await callRejectMessage();
+    await sleep(3000);
+    chat.clearState();
+    client.sendMessage(message.from, reply);
+  } else if (!session && message.type == "text") {
     logStartSession(message.from);
     const chat = await message.getChat();
     chat.sendStateTyping();
@@ -641,7 +654,7 @@ client.on("message", async (message) => {
       chat.clearState();
       client.sendMessage(message.from, reply);
     }
-  } else {
+  } else if (message.type == "text") {
     logKeywordNotFound(message.from, message.body);
     const chat = await message.getChat();
     chat.sendStateTyping();
@@ -650,6 +663,10 @@ client.on("message", async (message) => {
     chat.clearState();
     client.sendMessage(message.from, reply);
   }
+});
+
+client.on('call', async (call) => {
+  if (CALL_REJECT) await call.reject();
 });
 
 client.initialize();

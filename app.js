@@ -118,7 +118,9 @@ const getHistories = async (id) => {
   return rows || false;
 };
 
-const getInformation = async () => { };
+const storeRegistration = async () => { };
+
+const getNews = async () => { };
 
 const storeComplaint = async () => { };
 
@@ -497,46 +499,47 @@ client.on("message", async (message) => {
       client.sendMessage(message.from, reply);
     }
   } else if (session && message.body == "4") {
+    await updateContext(message.from, "payment");
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = await paymentMessage();
-    await startSession(message.from);
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "5") {
+    await updateContext(message.from, "registration");
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = await registrationMessage();
-    await startSession(message.from);
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "6") {
+    await updateContext(message.from, "complaint");
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = await complaintMessage();
-    await startSession(message.from);
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "7") {
+    await updateContext(message.from, "complaint-status");
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = await complaintStatusMessage();
-    await startSession(message.from);
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "8") {
+    await updateContext(message.from, "news");
     const chat = await message.getChat();
     chat.sendStateTyping();
-    const reply = await informationMessage();
-    await startSession(message.from);
+    const reply = await newsMessage();
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "9") {
+    await updateContext(message.from, "office");
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = officeLocation;

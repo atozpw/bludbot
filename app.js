@@ -13,6 +13,7 @@ const { Client, LocalAuth } = WhatsAppWebJS;
 
 const APP_NAME = process.env.APP_NAME;
 const CLIENT_ID = process.env.CLIENT_ID;
+const SESSION_TIME = process.env.SESSION_TIME;
 
 const client = new Client({
   authStrategy: new LocalAuth({
@@ -52,22 +53,22 @@ const connection = async () => {
 
 const startSession = async (from) => {
   const db = await connection();
-  const query = "INSERT INTO `wa_sessions` (`from`, `expired_at`) VALUES (?, UNIX_TIMESTAMP() + 900)";
-  await db.execute(query, [from]);
+  const query = "INSERT INTO `wa_sessions` (`from`, `expired_at`) VALUES (?, UNIX_TIMESTAMP() + ?)";
+  await db.execute(query, [from, SESSION_TIME]);
   await db.end();
 };
 
 const updateContext = async (from, context) => {
   const db = await connection();
-  const query = "UPDATE `wa_sessions` SET `context` = ?, `expired_at` = UNIX_TIMESTAMP() + 900 WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()";
-  await db.execute(query, [context, from]);
+  const query = "UPDATE `wa_sessions` SET `context` = ?, `expired_at` = UNIX_TIMESTAMP() + ? WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()";
+  await db.execute(query, [context, SESSION_TIME, from]);
   await db.end();
 };
 
 const updateSubject = async (from, subject) => {
   const db = await connection();
-  const query = "UPDATE `wa_sessions` SET `subject` = ?, `expired_at` = UNIX_TIMESTAMP() + 900 WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()";
-  await db.execute(query, [subject, from]);
+  const query = "UPDATE `wa_sessions` SET `subject` = ?, `expired_at` = UNIX_TIMESTAMP() + ? WHERE `from` = ? AND `expired_at` > UNIX_TIMESTAMP()";
+  await db.execute(query, [subject, SESSION_TIME, from]);
   await db.end();
 };
 

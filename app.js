@@ -9,7 +9,7 @@ import QrCode from "qrcode-terminal";
 import MySQL from "mysql2/promise";
 import DateFormat from "dateformat";
 
-const { Client, LocalAuth } = WhatsAppWebJS;
+const { Client, LocalAuth, Location } = WhatsAppWebJS;
 
 const APP_NAME = process.env.APP_NAME;
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -32,6 +32,12 @@ const client = new Client({
     ],
   },
 });
+
+const officeLocation = new Location(-6.8693818, 107.5541125, {
+  name: 'BLUD Air Minum Kota Cimahi',
+  address: '4HJ3+7X7, Citeureup, Kec. Cimahi Utara, Kota Cimahi, Jawa Barat 40512',
+  url: 'https://google.com'
+})
 
 // --------------------------------------------------------
 // End Initialize
@@ -193,6 +199,7 @@ const greetingMessage = async () => {
   message += `6. Pengaduan Pelanggan\n`;
   message += `7. Status Pengaduan\n`;
   message += `8. Informasi Gangguan\n`;
+  message += `9. Kantor Pelayanan\n`;
   message += `Anda bisa mengetikan angka dari pilihan di atas sesuai dengan informasi yang dibutuhkan.`;
   return message;
 };
@@ -214,7 +221,8 @@ const askContextMessage = async () => {
   message += `5. Pemasangan Baru\n`;
   message += `6. Pengaduan Pelanggan\n`;
   message += `7. Status Pengaduan\n`;
-  message += `8. Informasi Gangguan`;
+  message += `8. Informasi Gangguan\n`;
+  message += `9. Kantor Pelayanan`;
   return message;
 };
 
@@ -328,7 +336,8 @@ const keywordNotFoundMessage = async () => {
   message += `5. Pemasangan Baru\n`;
   message += `6. Pengaduan Pelanggan\n`;
   message += `7. Status Pengaduan\n`;
-  message += `8. Informasi Gangguan`;
+  message += `8. Informasi Gangguan\n`;
+  message += `9. Kantor Pelayanan`;
   return message;
 };
 
@@ -524,6 +533,13 @@ client.on("message", async (message) => {
     chat.sendStateTyping();
     const reply = await informationMessage();
     await startSession(message.from);
+    await sleep(3000);
+    chat.clearState();
+    client.sendMessage(message.from, reply);
+  } else if (session && message.body == "9") {
+    const chat = await message.getChat();
+    chat.sendStateTyping();
+    const reply = officeLocation;
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);

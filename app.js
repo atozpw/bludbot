@@ -210,7 +210,7 @@ const askSubjectMessage = async () => {
   return message;
 };
 
-const askContextMessage = async () => {
+const informationMessage = async () => {
   let message = ``;
   message += `Untuk melakukan pengecekan dengan nomor pelanggan yang berbeda, Anda bisa langsung mengetikan nomor pelanggan lagi.\n\n`;
   message += `Atau bisa mengetikan angka dari pilihan di bawah untuk mendapatkan informasi lainnya.\n`;
@@ -302,7 +302,7 @@ const complaintStatusMessage = async () => {
   return message;
 };
 
-const informationMessage = async () => {
+const newsMessage = async () => {
   let message = ``;
   message += `Mohon maaf, saat ini informasi tentang gangguan pengaliran belum tersedia.`;
   return message;
@@ -417,9 +417,9 @@ client.on("message", async (message) => {
       await sleep(2000);
       chat.sendStateTyping();
       await sleep(3000);
-      const info = await askContextMessage();
+      const information = await informationMessage();
       chat.clearState();
-      client.sendMessage(message.from, info);
+      client.sendMessage(message.from, information);
     } else {
       const reply = await askSubjectMessage();
       await sleep(2000);
@@ -440,9 +440,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       } else {
         const reply = await billNotFoundMessage(message.body);
         await sleep(3000);
@@ -451,9 +451,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       }
     } else {
       const reply = await askSubjectMessage();
@@ -475,9 +475,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       } else {
         const reply = await historyNotFoundMessage(message.body);
         await sleep(3000);
@@ -486,9 +486,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       }
     } else {
       const reply = await askSubjectMessage();
@@ -557,9 +557,9 @@ client.on("message", async (message) => {
       await sleep(2000);
       chat.sendStateTyping();
       await sleep(3000);
-      const info = await askContextMessage();
+      const information = await informationMessage();
       chat.clearState();
-      client.sendMessage(message.from, info);
+      client.sendMessage(message.from, information);
     } else {
       const reply = await customerNotFoundMessage(message.body);
       await sleep(3000);
@@ -581,9 +581,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       } else {
         const reply = await billNotFoundMessage(message.body);
         await sleep(3000);
@@ -592,9 +592,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       }
     } else {
       const reply = await customerNotFoundMessage(message.body);
@@ -617,9 +617,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       } else {
         const reply = await historyNotFoundMessage(message.body);
         await sleep(3000);
@@ -628,9 +628,9 @@ client.on("message", async (message) => {
         await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
-        const info = await askContextMessage();
+        const information = await informationMessage();
         chat.clearState();
-        client.sendMessage(message.from, info);
+        client.sendMessage(message.from, information);
       }
     } else {
       const reply = await customerNotFoundMessage(message.body);

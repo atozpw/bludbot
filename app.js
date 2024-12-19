@@ -351,7 +351,19 @@ const logSearching = (from, message) => {
   console.log(`Searching from ${from} with message ${message}`);
 };
 
-const logNotFound = (from, message) => {
+const logCustomerNotFound = (from, message) => {
+  console.log(`Customer not found from ${from} with message ${message}}`);
+};
+
+const logBillNotFound = (from, message) => {
+  console.log(`Bill not found from ${from} with message ${message}}`);
+};
+
+const logHistoryNotFound = (from, message) => {
+  console.log(`History Payment not found from ${from} with message ${message}}`);
+};
+
+const logKeywordNotFound = (from, message) => {
   console.log(`Keyword not found from ${from} with message ${message}}`);
 };
 
@@ -374,6 +386,7 @@ client.on("qr", (qr) => {
 client.on("message", async (message) => {
   const session = await getSession(message.from);
   if (!session) {
+    logStartSession(message.from);
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = await greetingMessage();
@@ -381,7 +394,6 @@ client.on("message", async (message) => {
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
-    logStartSession(message.from);
   } else if (session && message.body == "1") {
     await updateContext(message.from, "customer");
     const chat = await message.getChat();
@@ -391,7 +403,8 @@ client.on("message", async (message) => {
       const reply = await customerMessage(customer);
       await sleep(5000);
       chat.clearState();
-      await client.sendMessage(message.from, reply);
+      client.sendMessage(message.from, reply);
+      await sleep(2000);
       chat.sendStateTyping();
       await sleep(3000);
       const info = await askContextMessage();
@@ -413,7 +426,8 @@ client.on("message", async (message) => {
         const reply = await billsMessage(session["subject"], bills);
         await sleep(5000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -423,7 +437,8 @@ client.on("message", async (message) => {
         const reply = await billNotFoundMessage(message.body);
         await sleep(3000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -446,7 +461,8 @@ client.on("message", async (message) => {
         const reply = await historiesMessage(session["subject"], histories);
         await sleep(5000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -456,7 +472,8 @@ client.on("message", async (message) => {
         const reply = await historyNotFoundMessage(message.body);
         await sleep(3000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -519,9 +536,10 @@ client.on("message", async (message) => {
       const reply = await customerMessage(customer);
       await sleep(5000);
       chat.clearState();
-      await client.sendMessage(message.from, reply);
+      client.sendMessage(message.from, reply);
+      await sleep(2000);
       chat.sendStateTyping();
-      await sleep(5000);
+      await sleep(3000);
       const info = await askContextMessage();
       chat.clearState();
       client.sendMessage(message.from, info);
@@ -542,7 +560,8 @@ client.on("message", async (message) => {
         const reply = await billsMessage(message.body, bills);
         await sleep(5000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -552,7 +571,8 @@ client.on("message", async (message) => {
         const reply = await billNotFoundMessage(message.body);
         await sleep(3000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -576,7 +596,8 @@ client.on("message", async (message) => {
         const reply = await historiesMessage(message.body, histories);
         await sleep(5000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -586,7 +607,8 @@ client.on("message", async (message) => {
         const reply = await historyNotFoundMessage(message.body);
         await sleep(3000);
         chat.clearState();
-        await client.sendMessage(message.from, reply);
+        client.sendMessage(message.from, reply);
+        await sleep(2000);
         chat.sendStateTyping();
         await sleep(3000);
         const info = await askContextMessage();
@@ -600,13 +622,13 @@ client.on("message", async (message) => {
       client.sendMessage(message.from, reply);
     }
   } else {
+    logKeywordNotFound(message.from, message.body);
     const chat = await message.getChat();
     chat.sendStateTyping();
     const reply = await keywordNotFoundMessage();
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
-    logNotFound(message.from, message.body);
   }
 });
 

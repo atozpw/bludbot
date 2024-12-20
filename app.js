@@ -8,13 +8,16 @@ import WhatsAppWebJS from "whatsapp-web.js";
 import QrCode from "qrcode-terminal";
 import MySQL from "mysql2/promise";
 import DateFormat from "dateformat";
+import gTTS from "gtts";
 
-const { Client, LocalAuth, Location } = WhatsAppWebJS;
+const { Client, LocalAuth, Location, MessageMedia } = WhatsAppWebJS;
 
 const APP_NAME = process.env.APP_NAME;
 const CLIENT_ID = process.env.CLIENT_ID;
 const SESSION_TIME = process.env.SESSION_TIME;
 const CALL_REJECT = process.env.CALL_REJECT === "true";
+const TEXT_TO_SPEECH = process.env.TEXT_TO_SPEECH === "true";
+const TTS_CACHE_PATH = "./cache";
 
 const client = new Client({
   authStrategy: new LocalAuth({
@@ -419,6 +422,16 @@ client.on("message", async (message) => {
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
+    if (TEXT_TO_SPEECH) {
+      await sleep(3000);
+      const gtts = new gTTS(reply, "id");
+      const path = TTS_CACHE_PATH + "/greeting-message.mp3";
+      gtts.save(path, async (err) => {
+        if (err) throw new Error(err);
+        const media = MessageMedia.fromFilePath(path);
+        await client.sendMessage(message.from, media);
+      });
+    }
   } else if (session && message.body == "1") {
     await updateContext(message.from, "customer");
     const chat = await message.getChat();

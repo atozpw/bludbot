@@ -410,7 +410,7 @@ client.on("message", async (message) => {
     await sleep(3000);
     chat.clearState();
     client.sendMessage(message.from, reply);
-  } else if (!session && message.type == "text") {
+  } else if (!session && message.type == "chat") {
     logStartSession(message.from);
     const chat = await message.getChat();
     chat.sendStateTyping();
@@ -654,7 +654,7 @@ client.on("message", async (message) => {
       chat.clearState();
       client.sendMessage(message.from, reply);
     }
-  } else if (message.type == "text") {
+  } else if (message.type == "chat") {
     logKeywordNotFound(message.from, message.body);
     const chat = await message.getChat();
     chat.sendStateTyping();

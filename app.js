@@ -373,19 +373,19 @@ const logSearching = (from, message) => {
 };
 
 const logCustomerNotFound = (from, message) => {
-  console.log(`Customer not found from ${from} with message ${message}}`);
+  console.log(`Customer not found from ${from} with message ${message}`);
 };
 
 const logBillNotFound = (from, message) => {
-  console.log(`Bill not found from ${from} with message ${message}}`);
+  console.log(`Bill not found from ${from} with message ${message}`);
 };
 
 const logHistoryNotFound = (from, message) => {
-  console.log(`History Payment not found from ${from} with message ${message}}`);
+  console.log(`History Payment not found from ${from} with message ${message}`);
 };
 
 const logKeywordNotFound = (from, message) => {
-  console.log(`Keyword not found from ${from} with message ${message}}`);
+  console.log(`Keyword not found from ${from} with message ${message}`);
 };
 
 // --------------------------------------------------------

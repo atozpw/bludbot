@@ -396,8 +396,8 @@ const logKeywordNotFound = (from, message) => {
 // Begin Text to Speech
 // --------------------------------------------------------
 
-const ttsGretingMessage = async (from) => {
-  const gtts = new gTTS(reply, "id");
+const ttsGretingMessage = async (from, message) => {
+  const gtts = new gTTS(message, "id");
   const path = TTS_CACHE_PATH + "/greeting-message.mp3";
   gtts.save(path, async (err) => {
     if (err) throw new Error(err);
@@ -442,7 +442,7 @@ client.on("message", async (message) => {
     client.sendMessage(message.from, reply);
     if (TEXT_TO_SPEECH) {
       await sleep(3000);
-      await ttsGretingMessage(message.from);
+      await ttsGretingMessage(message.from, reply);
     }
   } else if (session && message.body == "1") {
     await updateContext(message.from, "customer");
@@ -484,7 +484,7 @@ client.on("message", async (message) => {
         chat.clearState();
         client.sendMessage(message.from, information);
       } else {
-        const reply = await billNotFoundMessage(message.body);
+        const reply = await billNotFoundMessage(session["subject"]);
         await sleep(3000);
         chat.clearState();
         client.sendMessage(message.from, reply);
@@ -519,7 +519,7 @@ client.on("message", async (message) => {
         chat.clearState();
         client.sendMessage(message.from, information);
       } else {
-        const reply = await historyNotFoundMessage(message.body);
+        const reply = await historyNotFoundMessage(session["subject"]);
         await sleep(3000);
         chat.clearState();
         client.sendMessage(message.from, reply);

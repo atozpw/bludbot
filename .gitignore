@@ -1,5 +1,5 @@
-node_modules
-.wwebjs_auth
-.wwebjs_cache
-cache/*
+/.wwebjs_auth
+/.wwebjs_cache
+/node_modules
+/cache/*.mp3
 .env

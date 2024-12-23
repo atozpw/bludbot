@@ -9,6 +9,7 @@ import QrCode from "qrcode-terminal";
 import MySQL from "mysql2/promise";
 import DateFormat from "dateformat";
 import gTTS from "gtts";
+import fs from "fs";
 
 const { Client, LocalAuth, Location, MessageMedia } = WhatsAppWebJS;
 
@@ -38,9 +39,13 @@ const client = new Client({
 });
 
 const officeLocation = new Location(-6.8693818, 107.5541125, {
-  name: 'BLUD Air Minum Kota Cimahi',
-  address: '4HJ3+7X7, Citeureup, Kec. Cimahi Utara, Kota Cimahi, Jawa Barat 40512'
+  name: "BLUD Air Minum Kota Cimahi",
+  address: "4HJ3+7X7, Citeureup, Kec. Cimahi Utara, Kota Cimahi, Jawa Barat 40512",
 });
+
+if (!fs.existsSync(TTS_CACHE_PATH)) {
+  fs.mkdirSync(TTS_CACHE_PATH);
+}
 
 // --------------------------------------------------------
 // End Initialize
@@ -121,13 +126,13 @@ const getHistories = async (id) => {
   return rows || false;
 };
 
-const storeRegistration = async () => { };
+const storeRegistration = async () => {};
 
-const getNews = async () => { };
+const getNews = async () => {};
 
-const storeComplaint = async () => { };
+const storeComplaint = async () => {};
 
-const getComplaint = async (id) => { };
+const getComplaint = async (id) => {};
 
 // --------------------------------------------------------
 // End Database Service
@@ -690,7 +695,7 @@ client.on("message", async (message) => {
   }
 });
 
-client.on('call', async (call) => {
+client.on("call", async (call) => {
   if (CALL_REJECT) await call.reject();
 });
 

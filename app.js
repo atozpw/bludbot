@@ -269,13 +269,22 @@ const historiesMessage = async (customerNo, histories) => {
 
 const paymentMessage = async () => {
   let message = ``;
-  message += `Mohon maaf, fitur sedang dalam pengembangan.`;
+  message += `Untuk saat ini pembayaran tagihan rekening air dan non air bisa dilakukan di Loket BLUD Air Minum Kota Cimahi yang beralamat di ...\n\n`;
+  message += `Selain itu, pembayaran tagihan rekening air juga bisa dilakukan dibeberapa channel, diantaranya:\n`;
+  message += `- Bank BJB\n`;
+  message += `- Bank BJB Syariah\n`;
+  message += `- Alfamart\n`;
+  message += `- Indomart\n`;
+  message += `- ...\n`;
+  message += `(Untuk rekening sampai dengan 3 bulan)\n\n`;
+  message += `- Loket PT. POS\n`;
+  message += `(Untuk rekening 1 bulan)`;
   return message;
 };
 
 const registrationMessage = async () => {
   let message = ``;
-  message += `Mohon maaf, fitur sedang dalam pengembangan.`;
+  message += `Untuk informasi lebih lanjut, Anda bisa datang langsung ke Kantor Pelayanan BLUD Air Minum Kota Cimahi yang beralamat di ...`;
   return message;
 };
 

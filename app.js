@@ -393,6 +393,24 @@ const logKeywordNotFound = (from, message) => {
 // --------------------------------------------------------
 
 // --------------------------------------------------------
+// Begin Text to Speech
+// --------------------------------------------------------
+
+const ttsGretingMessage = async (from) => {
+  const gtts = new gTTS(reply, "id");
+  const path = TTS_CACHE_PATH + "/greeting-message.mp3";
+  gtts.save(path, async (err) => {
+    if (err) throw new Error(err);
+    const media = MessageMedia.fromFilePath(path);
+    await client.sendMessage(from, media);
+  });
+};
+
+// --------------------------------------------------------
+// End Text to Speech
+// --------------------------------------------------------
+
+// --------------------------------------------------------
 // Begin WhatsApp Service
 // --------------------------------------------------------
 
@@ -424,13 +442,7 @@ client.on("message", async (message) => {
     client.sendMessage(message.from, reply);
     if (TEXT_TO_SPEECH) {
       await sleep(3000);
-      const gtts = new gTTS(reply, "id");
-      const path = TTS_CACHE_PATH + "/greeting-message.mp3";
-      gtts.save(path, async (err) => {
-        if (err) throw new Error(err);
-        const media = MessageMedia.fromFilePath(path);
-        await client.sendMessage(message.from, media);
-      });
+      await ttsGretingMessage(message.from);
     }
   } else if (session && message.body == "1") {
     await updateContext(message.from, "customer");

@@ -143,34 +143,18 @@ const getComplaint = async (id) => {};
 // --------------------------------------------------------
 
 const monthFormatter = (value) => {
-  const month = [
-    "",
-    "Januari",
-    "Februari",
-    "Maret",
-    "April",
-    "Mei",
-    "Juni",
-    "Juli",
-    "Agustus",
-    "September",
-    "Oktober",
-    "November",
-    "Desember",
-  ];
+  const month = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   let formatted = month[value];
   return formatted;
 };
 
 const rupiahFormatter = (number) => {
-  let tempNum = String(number).split("").reverse();
+  let temp = String(number).split("").reverse();
   let formatted = "";
-  for (let i = 0; i < tempNum.length; i++) {
-    if ((i + 1) % 3 == 0 && i != tempNum.length - 1) {
-      tempNum[i] = `.${tempNum[i]}`;
-    }
+  for (let i = 0; i < temp.length; i++) {
+    if ((i + 1) % 3 == 0 && i != temp.length - 1) temp[i] = `.${temp[i]}`;
   }
-  formatted = `Rp. ${tempNum.reverse().join("")}`;
+  formatted = `Rp. ${temp.reverse().join("")}`;
   return formatted;
 };
 
@@ -179,15 +163,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const time = () => {
   const date = new Date();
   const time = DateFormat(date, "HH:MM");
-  if (time >= "04:00" && time < "10:00") {
-    return "pagi";
-  } else if (time >= "10:00" && time < "16:00") {
-    return "siang";
-  } else if (time >= "16:00" && time < "19:00") {
-    return "sore";
-  } else if (time >= "19:00" && time < "04:00") {
-    return "malam";
-  }
+  if (time >= "04:00" && time < "10:00") return "pagi";
+  if (time >= "10:00" && time < "16:00") return "siang";
+  if (time >= "16:00" && time < "19:00") return "sore";
+  if (time >= "19:00" && time < "04:00") return "malam";
 };
 
 // --------------------------------------------------------

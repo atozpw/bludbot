@@ -126,13 +126,13 @@ const getHistories = async (id) => {
   return rows || false;
 };
 
-const storeRegistration = async () => {};
+const storeRegistration = async () => { };
 
-const getNews = async () => {};
+const getNews = async () => { };
 
-const storeComplaint = async () => {};
+const storeComplaint = async () => { };
 
-const getComplaint = async (id) => {};
+const getComplaint = async (id) => { };
 
 // --------------------------------------------------------
 // End Database Service
@@ -269,14 +269,23 @@ const historiesMessage = async (customerNo, histories) => {
 
 const paymentMessage = async () => {
   let message = ``;
-  message += `Untuk saat ini pembayaran tagihan rekening air dan non air bisa dilakukan di Loket BLUD Air Minum Kota Cimahi yang beralamat di ...\n\n`;
-  message += `Selain itu, pembayaran tagihan rekening air juga bisa dilakukan dibeberapa channel, diantaranya:\n`;
+  message += `Untuk saat ini pembayaran tagihan rekening air dan non air bisa dilakukan di Loket BLUD Air Minum Kota Cimahi yang beralamat di Citeureup, Kec. Cimahi Utara, Kota Cimahi.\n\n`;
+  message += `Selain itu, pembayaran tagihan rekening air juga bisa dilakukan dibeberapa layanan, seperti:\n`;
   message += `- Bank BJB\n`;
-  message += `- Bank BJB Syariah\n`;
+  message += `- Bank BJB Syariah Teller\n`;
   message += `- Alfamart\n`;
   message += `- Indomart\n`;
-  message += `- ...\n`;
-  message += `(Untuk rekening sampai dengan 3 bulan)\n\n`;
+  message += `- Dana\n`;
+  message += `- Tokopedia\n`;
+  message += `- Bukalapak\n`;
+  message += `- Bimasakti\n`;
+  message += `- DJI\n`;
+  message += `- Bakoel\n`;
+  message += `- Fortuna\n`;
+  message += `- Altera Sepulsa\n`;
+  message += `- Masago\n`;
+  message += `- Onpays\n`;
+  message += `(Untuk rekening sampai dengan 3 bulan)\n`;
   message += `- Loket PT. POS\n`;
   message += `(Untuk rekening 1 bulan)`;
   return message;

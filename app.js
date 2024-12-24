@@ -199,6 +199,12 @@ const askSubjectMessage = async () => {
   return message;
 };
 
+const askComplaintMessage = async () => {
+  let message = ``;
+  message += `Silahkan jelaskan keluhan Anda...`;
+  return message;
+};
+
 const informationMessage = async () => {
   let message = ``;
   message += `Untuk melakukan pengecekan dengan nomor pelanggan yang berbeda, Anda bisa langsung mengetikan nomor pelanggan lagi.\n\n`;
@@ -293,11 +299,11 @@ const paymentMessage = async () => {
 
 const registrationMessage = async () => {
   let message = ``;
-  message += `Untuk informasi lebih lanjut, Anda bisa datang langsung ke Kantor Pelayanan BLUD Air Minum Kota Cimahi yang beralamat di ...`;
+  message += `Untuk informasi lebih lanjut, Anda bisa datang langsung ke Kantor Pelayanan BLUD Air Minum Kota Cimahi yang beralamat di Citeureup, Kec. Cimahi Utara, Kota Cimahi.`;
   return message;
 };
 
-const complaintMessage = async () => {
+const complaintSuccessMessage = async () => {
   let message = ``;
   message += `Mohon maaf, fitur sedang dalam pengembangan.`;
   return message;
@@ -556,10 +562,11 @@ client.on("message", async (message) => {
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "6") {
     await updateContext(message.from, "complaint");
+    await updateSubject(message.from, "");
     const chat = await message.getChat();
     chat.sendStateTyping();
-    const reply = await complaintMessage();
-    await sleep(3000);
+    const reply = await askSubjectMessage();
+    await sleep(2000);
     chat.clearState();
     client.sendMessage(message.from, reply);
   } else if (session && message.body == "7") {
@@ -681,6 +688,30 @@ client.on("message", async (message) => {
       chat.clearState();
       client.sendMessage(message.from, reply);
     }
+  } else if (session && session["context"] == "complaint" && !session["subject"]) {
+    const chat = await message.getChat();
+    chat.sendStateTyping();
+    const check = await checkCustomer(message.body);
+    if (check) {
+      await updateSubject(message.from, message.body);
+      const reply = await askComplaintMessage();
+      await sleep(2000);
+      chat.clearState();
+      client.sendMessage(message.from, reply);
+    } else {
+      const reply = await customerNotFoundMessage(message.body);
+      await sleep(3000);
+      chat.clearState();
+      client.sendMessage(message.from, reply);
+    }
+  } else if (session && session["context"] == "complaint" && session["subject"]) {
+    await updateContext(message.from, "");
+    const chat = await message.getChat();
+    chat.sendStateTyping();
+    const reply = await complaintStatusMessage();
+    await sleep(3000);
+    chat.clearState();
+    client.sendMessage(message.from, reply);
   } else if (message.type == "chat") {
     logKeywordNotFound(message.from, message.body);
     const chat = await message.getChat();
